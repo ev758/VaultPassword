@@ -16,3 +16,62 @@ body {
 h1 {
   font-size: 3.2em;
 }
+
+label {
+  font-size: 24px;
+  float: left;
+  margin-left: 30px;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  margin: 0px 20px;
+}
+
+.title {
+  margin: 50px 0px;
+}
+
+.login {
+  width: 430px;
+  height: 360px;
+  border: 2px solid black;
+  border-radius: 30px;
+  margin: auto;
+}
+
+.login-title {
+  margin: 25px 0px 20px 0px;
+}
+
+.login input, .create-account input {
+  width: 360px;
+  margin-bottom: 30px;
+}
+
+.create-account {
+  width: 430px;
+  height: 490px;
+  border: 2px solid black;
+  border-radius: 30px;
+  margin: auto;
+}
+
+.create-account h2, .forgot-password h2 {
+  margin: 25px 0px;
+}
+
+.submit-button {
+  margin-top: 30px;
+}
+
+.forgot-password {
+  width: 430px;
+  height: 360px;
+  border: 2px solid black;
+  border-radius: 30px;
+  margin: auto;
+}
