@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
-import Login from './Login.jsx';
-import CreateAccount from './CreateAccount.jsx';
-import ForgotPassword from './ForgotPassword.jsx';
-import Portal from './Portal.jsx';
+import Login from './pages/Login.jsx';
+import CreateAccount from './pages/CreateAccount.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import Portal from './pages/Portal.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './index.css';
 
 const router = createBrowserRouter(
@@ -14,7 +15,7 @@ const router = createBrowserRouter(
       <Route index element={<Login/>}/>
       <Route path="create-account" element={<CreateAccount/>}/>
       <Route path="forgot-password" element={<ForgotPassword/>}/>
-      <Route path="portal" element={<Portal/>}/>
+      <Route path="portal" element={<ProtectedRoute><Portal/></ProtectedRoute>}/>
     </Route>
   )
 );

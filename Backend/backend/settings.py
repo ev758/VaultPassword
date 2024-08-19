@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 from dotenv import find_dotenv, load_dotenv
 import os
 
@@ -13,6 +14,8 @@ HOST = os.getenv("HOST")
 DB_PORT = os.getenv("DB_PORT")
 USER = os.getenv("USER")
 PASSWORD = os.getenv("PASSWORD")
+DJANGO_SERVER = os.getenv("DJANGO_SERVER")
+VITE = os.getenv("VITE")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [DJANGO_SERVER]
 
 
 # Application definition
@@ -39,9 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'vault_password',
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +57,25 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+#JWT configuration
+SIMPLE_JWT = {
+    #access token expires in 30 minutes
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    #refresh token expires in 1 day
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+CORS_ALLOWED_ORIGINS = [VITE]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -77,7 +103,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': NAME,
         'HOST': HOST,
         'PORT': DB_PORT,
