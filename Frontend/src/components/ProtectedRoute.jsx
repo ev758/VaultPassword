@@ -60,9 +60,13 @@ function ProtectedRoute({ children }) {
         else {
             setAuthorized(true);
         }
-
-        return authorized ? children : <Navigate to="/"/>;
     };
+
+    if (authorized === null) {
+        return <div></div>;
+    }
+
+    return authorized ? children : <Navigate to="/"/>;
 }
 
 export default ProtectedRoute;

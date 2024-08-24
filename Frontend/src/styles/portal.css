@@ -1,0 +1,103 @@
+.portal-navbar {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px 0px;
+    position: fixed;
+    z-index: 1;
+}
+
+.portal-title {
+    margin-top: 15px;
+}
+
+.mb-3 {
+    width: 80%;
+    margin-top: 10px;
+}
+
+.dropdown-toggle {
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 30px;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-item:active {
+    background-color: black;
+}
+
+.add-password-button {
+    width: 85px;
+    height: 81px;
+    background-color: white;
+    border-radius: 50px;
+    font-size: 35px;
+    position: fixed;
+    bottom: 15px;
+    right: 25px;
+    z-index: 1;
+}
+
+.password-storage {
+    padding-top: 100px;
+}
+
+.category {
+    padding-top: 50px;
+}
+
+.category-title {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.category-format {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 30px;
+    justify-content: space-evenly;
+}
+
+.category-passwords {
+    width: 300px;
+    height: 150px;
+    border: 1px solid black;
+    margin: 10px 20px;
+}
+
+.modal-dialog {
+    width: 700px;
+    max-width: 100%;
+    margin-top: 120px;
+}
+
+.modal-content {
+    width: 700px;
+    text-align: center;
+}
+
+.password-form .url, .password-form .website, .password-form .username, .password-form .note,
+.profile-form .first-name, .profile-form .last-name, .profile-form .email {
+  margin-top: 30px;
+}
+
+.password-form .username, .profile-form .email {
+  float: left;
+  margin-bottom: 30px;
+}
+
+.password-form .password, .profile-form .password {
+  float: right;
+  margin: 30px 30px 30px 0px;
+}
+
+.password-form .password label, .profile-form .password label {
+  margin-left: 10px;
+}
