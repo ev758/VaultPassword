@@ -4,7 +4,7 @@ function AddPassword() {
   return (
     <>
       <h1 className="title">Vault Password</h1>
-      <PasswordForm/>
+      <PasswordForm request="add password"/>
     </>
   )
 }

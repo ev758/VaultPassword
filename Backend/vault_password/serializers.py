@@ -16,3 +16,4 @@ class PasswordStorageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PasswordStorage
         fields = '__all__'
+        extra_kwargs = {'account': {'read_only': True}}

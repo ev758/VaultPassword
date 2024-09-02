@@ -7,7 +7,7 @@ class PasswordStorage(models.Model):
     website_name = models.CharField(max_length=30)
     category = models.CharField(max_length=30)
     username = models.CharField(max_length=50)
-    stored_password = models.CharField(max_length=50)
+    stored_password = models.CharField(max_length=150)
     note = models.TextField(blank=True, null=True)
     account = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

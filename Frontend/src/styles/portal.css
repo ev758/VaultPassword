@@ -72,6 +72,10 @@
     margin: 10px 20px;
 }
 
+.category-passwords h5 {
+    margin-top: 30px;
+}
+
 .modal-dialog {
     width: 700px;
     max-width: 100%;
