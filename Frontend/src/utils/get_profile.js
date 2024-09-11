@@ -3,7 +3,7 @@ import djangoApiConnection from "../django_api.js";
 const getProfile = async (setProfile) => {
     try {
         //sends GET request to get profile
-        const response = await djangoApiConnection("profile/");
+        const response = await djangoApiConnection.get("profile/");
 
         setProfile(response.data);
     }

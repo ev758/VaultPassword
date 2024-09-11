@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import PasswordForm from './PasswordForm.jsx';
 import getPasswordStorages from '../utils/get_password_storages.js';
 
-function PasswordStorage() {
+function PasswordStorage({ keyword }) {
   //declarations
   const categoryList = ["Categories", "Education", "Email", "Entertainment", "Music",
   "News Media", "Retail", "Social Media", "Technology", "Video Games"];
@@ -19,7 +19,31 @@ function PasswordStorage() {
   return (
     <>
       <div className="password-storage">
-        {//displays categories dynamically
+        {(keyword !== null) ?
+          <div className="category">
+            <h4 className="category-title">Search results of {keyword}</h4>
+            <hr/>
+            <div className="category-format">
+              {//loops through password storages
+                passwordStorages.map(passwordStorage => 
+                  (passwordStorage.website_name === keyword ||
+                    passwordStorage.username === keyword) ?
+                  <div className="category-passwords" onClick={() => modal(passwordStorage.storage_id)} key={passwordStorage.storage_id}>
+                    <h5>{passwordStorage.website_name}</h5>
+
+                    {/* displays password storage */}
+                    <Modal show={show === passwordStorage.storage_id} onHide={close} backdrop="static" keyboard={false}>
+                      <Modal.Body>
+                        <PasswordForm request="update password" get="password storage" storageId={passwordStorage.storage_id}/>
+                      </Modal.Body>
+                    </Modal>
+                  </div> :
+                  <div style={{display: "none"}}></div>
+                )
+              }
+            </div>
+          </div> :
+          //displays categories dynamically
           categoryList.map(category => 
             <div className="category">
               <h4 className="category-title">{category}</h4>

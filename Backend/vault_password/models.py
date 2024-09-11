@@ -13,3 +13,19 @@ class PasswordStorage(models.Model):
 
     class Meta:
         db_table = 'password_storage'
+
+class Authentication(models.Model):
+    authentication_id = models.AutoField(primary_key=True)
+    authenticated = models.BooleanField(default=False)
+    account = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        db_table = 'authentication'
+
+class ForgotPassword(models.Model):
+    email = models.EmailField()
+    password_reset_token = models.CharField(max_length=100)
+    account = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        db_table = 'forgot_password'

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import getProfile from '../utils/get_profile.js';
+import getAuthentication from '../utils/get_authentication.js';
+import getQRCode from '../utils/get_qrcode.js';
 import djangoApiConnection from '../django_api.js';
 import ProfileImage from '../assets/profile.jpg';
 import '../styles/profile.css'
@@ -9,6 +11,7 @@ import '../styles/profile.css'
 function Profile() {
   //declarations
   const [profile, setProfile] = useState([]);
+  const [authentication, setAuthentication] = useState([]);
   const navigate = useNavigate();
   const firstNameRef = useRef("");
   const lastNameRef = useRef("");
@@ -16,6 +19,7 @@ function Profile() {
 
   useEffect(() => {
     getProfile(setProfile);
+    getAuthentication(setAuthentication);
   }, []);
 
   const updateProfile = async (event) => {
@@ -104,7 +108,21 @@ function Profile() {
             <input type="password" id="password" name="password"/>
           </div>
 
-          <Button className="authentication-button" as="input" type="submit" value="Activate Two-Step Authentication" variant="dark"/>
+          <Button
+            className="authentication-button"
+            onClick={() => {
+              if (authentication.authenticated === false) {
+                getQRCode();
+                navigate("two-factor-authentication");
+              }
+            }}
+            variant="dark"
+          >
+            {(authentication.authenticated) ?
+              "Activated Two-Factor Authentication" :
+              "Activate Two-Factor Authentication"
+            }
+          </Button>
           <Button className="save-changes-button" as="input" type="submit" value="Save Changes" variant="dark"/>
           <Button className="delete-button" onClick={() => {
             const input = window.prompt("Do you want to delete your account? " +
