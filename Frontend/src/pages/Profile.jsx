@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from 'react-bootstrap';
+import { Alert, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import getProfile from '../utils/get_profile.js';
 import getAuthentication from '../utils/get_authentication.js';
 import getQRCode from '../utils/get_qrcode.js';
+import validation from '../utils/validation.js';
 import djangoApiConnection from '../django_api.js';
 import ProfileImage from '../assets/profile.jpg';
 import '../styles/profile.css'
@@ -12,6 +13,7 @@ function Profile() {
   //declarations
   const [profile, setProfile] = useState([]);
   const [authentication, setAuthentication] = useState([]);
+  const [alertValidation, setAlertValidation] = useState(false);
   const navigate = useNavigate();
   const firstNameRef = useRef("");
   const lastNameRef = useRef("");
@@ -24,22 +26,27 @@ function Profile() {
 
   const updateProfile = async (event) => {
     event.preventDefault();
-    let password = (event.target.password.value === null) ? profile.password : event.target.password.value
     
-    try {
-      //sends PUT request to update profile
-      const response = await djangoApiConnection.put(`profile/update/${profile.id}/`, {
-        first_name: firstNameRef.current.value,
-        last_name: lastNameRef.current.value,
-        email: emailRef.current.value,
-        username: profile.username,
-        password: password
-      });
+    if (validation()) {
+      let password = event.target.password.value
+    
+      try {
+        //sends POST request to update profile
+        const response = await djangoApiConnection.post(`profile/update/`, {
+          first_name: firstNameRef.current.value,
+          last_name: lastNameRef.current.value,
+          email: emailRef.current.value,
+          password: password
+        });
 
-      window.location.reload();
+        window.location.reload();
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
-    catch (error) {
-      console.log(error);
+    else {
+      setAlertValidation(true);
     }
   }
 
@@ -59,6 +66,20 @@ function Profile() {
   return (
     <>
       <div>
+        {/* input validation alert */}
+        <Alert show={alertValidation} variant="danger" onClose={() => setAlertValidation(false)} dismissible>
+          <Alert.Heading>Invalid Inputs</Alert.Heading>
+          <ul>
+            <li>First name must be capitalized, have letters only, and a length between 2-50.</li>
+            <li>Last name is optional. If it is only one last name, it needs to be capitalized, 
+            have letters, and a length between 2-75. A last name with two names needs to be 
+            capitalized, have letters and can include a hyphen or space between the two last names, 
+            and a length between 2-75 for each one.</li>
+            <li>Email must be a valid email address.</li>
+            <li>Password must only have letters, numbers, or special characters (!@#$%^&*), and a length between 20-50.</li>
+          </ul>
+        </Alert>
+
         <h1 className="profile-title">Vault Password</h1>
         <img className="profile-image" src={ProfileImage} alt="profile image"/>
         <br/>
@@ -105,7 +126,7 @@ function Profile() {
           <div className="password">
             <label htmlFor="password">password</label>
             <br/>
-            <input type="password" id="password" name="password"/>
+            <input type="password" id="profilePassword" name="password"/>
           </div>
 
           <Button

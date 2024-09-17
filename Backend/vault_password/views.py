@@ -2,7 +2,7 @@ from vault_password.models import PasswordStorage, Authentication, ForgotPasswor
 from vault_password.serializers import UserSerializer, PasswordStorageSerializer, AuthenticationSerializer, ForgotPasswordSerializer
 from cryptography.fernet import Fernet
 from django.conf import settings
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
@@ -21,13 +21,18 @@ class CreateAccount(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-class VerifiedAuthentication(generics.RetrieveAPIView):
-    serializer_class = AuthenticationSerializer
+class VerifiedAuthentication(generics.CreateAPIView):
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-    def get_object(self):
-        user = User.objects.get(username=self.kwargs['username'])
-        return Authentication.objects.get(account=user)
+    def post(self, request):
+        user = User.objects.get(username=request.data['username'])
+
+        if user is not None:
+            authentication = Authentication.objects.get(account=user)
+            return HttpResponse(authentication.authenticated)
+        
+        return HttpResponse("User does not exist")
 
 class AccountAuthentication(generics.CreateAPIView):
     serializer_class = AuthenticationSerializer
@@ -127,7 +132,7 @@ class PasswordStorageList(generics.ListAPIView):
     def get_queryset(self):
         return PasswordStorage.objects.filter(account=self.request.user).order_by('category', 'website_name')
 
-class ModalPasswordStorage(generics.RetrieveAPIView):
+class ModalPasswordStorage(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PasswordStorageSerializer
     permission_classes = [IsAuthenticated]
 
@@ -149,41 +154,61 @@ class ModalPasswordStorage(generics.RetrieveAPIView):
         note = plaintext.decode('utf-8')
         #sets note
         password_storage.note = note
-
-        password_storage.save()
         
         return password_storage
+    
+    def post(self, request, pk):
+        password_storage = PasswordStorage(pk=pk)
 
-class UpdatePasswordStorage(generics.UpdateAPIView):
-    queryset = PasswordStorage.objects.all()
+        #sets url, website name, category, and username
+        password_storage.url = request.data['url']
+        password_storage.website_name = request.data['website_name']
+        password_storage.category = request.data['category']
+        password_storage.username = request.data['username']
+        
+        fernet = Fernet(settings.SECRET_KEY)
+
+        #converts password string to bytes
+        encoded_password = request.data['stored_password'].encode('utf-8')
+        #encrypts password
+        ciphertext = fernet.encrypt(encoded_password)
+        #converts cipher text bytes to string
+        password = ciphertext.decode('utf-8')
+        #sets password
+        password_storage.stored_password = password
+
+        #converts note string to bytes
+        encoded_note = request.data['note'].encode('utf-8')
+        #encrypts note
+        ciphertext = fernet.encrypt(encoded_note)
+        #converts cipher text bytes to string
+        note = ciphertext.decode('utf-8')
+        #sets note
+        password_storage.note = note
+
+        password_storage.account = self.request.user
+        password_storage.save()
+
+        return HttpResponse("Updated password storage")
+    
+    def perform_destroy(self, instance):
+        instance.delete()
+
+class GetPassword(generics.RetrieveAPIView):
     serializer_class = PasswordStorageSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_update(self, serializer):
-        if serializer.is_valid():
-            fernet = Fernet(settings.SECRET_KEY)
+    def get(self, request, pk):
+        #declarations
+        password_storage = PasswordStorage.objects.get(pk=pk)
+        fernet = Fernet(settings.SECRET_KEY)
+        
+        #decrypts password
+        plaintext = fernet.decrypt(password_storage.stored_password)
+        #converts plaintext bytes to string
+        password = plaintext.decode('utf-8')
 
-            #converts password string to bytes
-            encoded_password = serializer.validated_data['stored_password'].encode('utf-8')
-            #encrypts password
-            ciphertext = fernet.encrypt(encoded_password)
-            #converts cipher text bytes to string
-            password = ciphertext.decode('utf-8')
-            #sets password
-            serializer.validated_data['stored_password'] = password
-
-            #converts note string to bytes
-            encoded_note = serializer.validated_data['note'].encode('utf-8')
-            #encrypts note
-            ciphertext = fernet.encrypt(encoded_note)
-            #converts cipher text bytes to string
-            note = ciphertext.decode('utf-8')
-            #sets note
-            serializer.validated_data['note'] = note
-
-            serializer.save(account=self.request.user)
-        else:
-            print(serializer.errors)
+        return HttpResponse(password)
 
 class Profile(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
@@ -193,12 +218,26 @@ class Profile(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         return User.objects.get(pk=user.id)
     
-    def perform_update(self, serializer):
-        if serializer.is_valid():
-            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
-            serializer.save()
+    def post(self, request):
+        user = self.request.user
+        
+        #sets first name, last name, and email
+        user.first_name = request.data['first_name']
+        user.last_name = request.data['last_name']
+        user.email = request.data['email']
+
+        if request.data['password'] == "":
+            user.save()
+            return HttpResponse("Updated Profile")
+        elif check_password(request.data['password'], user.password):
+            user.save()
+            return HttpResponse("Updated Profile")
         else:
-            print(serializer.errors)
+            user.set_password(request.data['password'])
+        
+        user.save()
+
+        return HttpResponse("Updated profile")
     
     def perform_destroy(self, instance):
         instance.delete()
@@ -211,7 +250,7 @@ class ProfileAuthentication(generics.RetrieveAPIView):
         user = self.request.user
         return Authentication.objects.get(account=user)
 
-class QRCode(generics.RetrieveAPIView):
+class QRCode(generics.RetrieveDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -235,11 +274,7 @@ class QRCode(generics.RetrieveAPIView):
         os.rename(backend_directory, frontend_directory)
 
         return HttpResponse("QR Code generated")
-
-class DeleteQRCode(generics.DestroyAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
+    
     def delete(self, request):
         #declarations
         user = self.request.user

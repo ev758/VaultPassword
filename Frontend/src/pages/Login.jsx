@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import { Alert, Modal } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountAuthentication from '../components/AccountAuthentication.jsx';
+import validation from '../utils/validation.js';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../jwt_tokens.js';
 import djangoApiConnection from '../django_api.js';
 
 function Login() {
   //declarations
   const navigate = useNavigate();
+  const [alertValidation, setAlertValidation] = useState(false);
   const [show, setShow] = useState(false);
   const close = () => setShow(false);
   const modal = () => setShow(true);
@@ -15,31 +17,40 @@ function Login() {
   const loginRequest = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      //declarations
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      //sends POST request to get access and refresh tokens
-      const jwt = djangoApiConnection.post("token/", {username: username, password: password});
-      //sends GET request to get authentication
-      const authentication = djangoApiConnection.get(`verified-authentication/${username}/`);
-      const axiosRequests = Promise.all([jwt, authentication]);
-    
-      try {
-        const responses = await axiosRequests;
+      
+      if (validation()) {
+        //declarations
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const notification = document.getElementById("loginNotification");
+        //sends POST request to get access and refresh tokens
+        const jwt = djangoApiConnection.post("token/", {username: username, password: password});
+        //sends POST request to get authentication
+        const authentication = djangoApiConnection.post("verified-authentication/", {username: username});
+        const axiosRequests = Promise.all([jwt, authentication]);
+      
+        try {
+          const responses = await axiosRequests;
 
-        //sets access and refresh tokens
-        localStorage.setItem(ACCESS_TOKEN, responses[0].data.access);
-        localStorage.setItem(REFRESH_TOKEN, responses[0].data.refresh);
-    
-        if (responses[1].data.authenticated === false) {
-          navigate("/portal");
+          //sets access and refresh tokens
+          localStorage.setItem(ACCESS_TOKEN, responses[0].data.access);
+          localStorage.setItem(REFRESH_TOKEN, responses[0].data.refresh);
+      
+          if (responses[1].data === "False") {
+            navigate("/portal");
+          }
+          else if (responses[1].data === "True") {
+            modal();
+          }
         }
-        else if (responses[1].data.authenticated === true) {
-          modal();
+        catch (error) {
+          notification.textContent = "User does not exist, please enter your username and password.";
+          notification.style.color = "red";
+          console.log(error);
         }
       }
-      catch (error) {
-        console.log(error);
+      else {
+        setAlertValidation(true);
       }
     }
   }
@@ -47,6 +58,15 @@ function Login() {
   return (
     <>
       <div>
+        {/* input validation alert */}
+        <Alert show={alertValidation} variant="danger" onClose={() => setAlertValidation(false)} dismissible>
+          <Alert.Heading>Invalid Inputs</Alert.Heading>
+          <ul>
+            <li>Username must only have letters, numbers, and a length between 10-50.</li>
+            <li>Password must only have letters, numbers, or special characters (!@#$%^&*), and a length between 20-50.</li>
+          </ul>
+        </Alert>
+        
         <h1 className="title">Vault Password</h1>
 
         <form className="login" onKeyDown={loginRequest}>
@@ -68,7 +88,12 @@ function Login() {
             <Link to="forgot-password">Forgot password</Link>
           </nav>
         </form>
+        <br/>
+        <br/>
 
+        <span id="loginNotification"></span>
+
+        {/* displays authentication code input */}
         <Modal show={show} onHide={close} backdrop="static" keyboard={false}>
           <Modal.Body>
             <AccountAuthentication/>

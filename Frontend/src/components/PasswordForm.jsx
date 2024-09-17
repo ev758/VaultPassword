@@ -5,7 +5,7 @@ import modalPasswordStorage from '../utils/modal_password_storage.js';
 import djangoApiConnection from '../django_api.js';
 import '../styles/password_form.css';
 
-function PasswordForm({ request, get="", storageId="" }) {
+function PasswordForm({ request, get="", storageId="", close=null }) {
   //declarations
   const [passwordStorage, setPasswordStorage] = useState([]);
   const navigate = useNavigate();
@@ -14,7 +14,6 @@ function PasswordForm({ request, get="", storageId="" }) {
   const usernameRef = useRef("");
   const passwordRef = useRef("");
   const noteRef = useRef("");
-  let cancelUpdate = "";
 
   if (get === "password storage") {
     useEffect(() => {
@@ -37,33 +36,20 @@ function PasswordForm({ request, get="", storageId="" }) {
           stored_password: passwordRef.current.value,
           note: noteRef.current.value
         });
-    
+
         navigate("/portal");
       }
       else if (request === "update password") {
-        if (cancelUpdate === "cancel update") {
-          //sends PUT request to update password storage with the same data
-          const response = await djangoApiConnection.put(`update-password-storage/${storageId}/`, {
-            url: passwordStorage.url,
-            website_name: passwordStorage.website_name,
-            category: passwordStorage.category,
-            username: passwordStorage.username,
-            stored_password: passwordStorage.stored_password,
-            note: passwordStorage.note
-          });
-        }
-        else {
-          //sends PUT request to update a password storage
-          const response = await djangoApiConnection.put(`update-password-storage/${storageId}/`, {
-            url: urlRef.current.value,
-            website_name: websiteRef.current.value,
-            category: categories,
-            username: usernameRef.current.value,
-            stored_password: passwordRef.current.value,
-            note: noteRef.current.value
-          });
-        }
-  
+        //sends POST request to update a password storage
+        const response = await djangoApiConnection.post(`password-storage/update/${storageId}/`, {
+          url: urlRef.current.value,
+          website_name: websiteRef.current.value,
+          category: categories,
+          username: usernameRef.current.value,
+          stored_password: passwordRef.current.value,
+          note: noteRef.current.value
+        });
+
         window.location.reload();
       }
     }
@@ -174,15 +160,13 @@ function PasswordForm({ request, get="", storageId="" }) {
               navigate("/portal");
             }
             else if (request === "update password") {
-              cancelUpdate = "cancel update";
+              close();
             }
           }}
-          as="input"
-          type="submit"
-          form={"passwordForm" + passwordStorage.storage_id}
-          value="Cancel"
           variant="dark"
-        />
+        >
+          Cancel
+        </Button>
       </div>
     </>
   )

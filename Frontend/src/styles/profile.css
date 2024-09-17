@@ -21,6 +21,7 @@
 .profile-form {
     width: 590px;
     height: 440px;
+    background-color: white;
     border: 2px solid black;
     margin: auto;
 }
