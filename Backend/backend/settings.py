@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.python',
         'NAME': NAME,
         'HOST': HOST,
         'PORT': DB_PORT,

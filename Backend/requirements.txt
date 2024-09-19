@@ -5,7 +5,7 @@ Django
 django-cors-headers
 djangorestframework
 djangorestframework-simplejwt
-mysqlclient
+mysql-connector-python
 PyJWT
 pyotp
 python-dotenv
