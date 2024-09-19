@@ -64,6 +64,17 @@ nav a {
   margin-bottom: 30px;
 }
 
+.modal-dialog {
+  width: 700px;
+  max-width: 100%;
+  margin-top: 120px;
+}
+
+.modal-content {
+  width: 700px;
+  text-align: center;
+}
+
 .create-account {
   width: 430px;
   height: 585px;
@@ -95,4 +106,60 @@ nav a {
   height: 50px;
   text-align: center;
   font-size: 25px;
+}
+
+@media only screen and (max-width: 480px) {
+  nav a {
+    margin: 0px 10px;
+  }
+  
+  .alert ul {
+    font-size: 10px;
+  }
+  
+  .login {
+    width: 300px;
+  }
+  
+  .login input, .create-account input, .forgot-password input, .password-reset input {
+    width: 230px;
+  }
+
+  .modal-dialog {
+    max-width: 95%;
+  }
+
+  .modal-content {
+      width: 300px;
+      margin: auto;
+  }
+  
+  .create-account {
+    width: 300px;
+  }
+  
+  .forgot-password, .password-reset {
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 481px) {
+  .modal-dialog {
+    max-width: 95%;
+  }
+
+  .modal-content {
+      width: 460px;
+      margin: auto;
+  }
+
+  .alert ul {
+    font-size: 11px;
+  }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+  .alert ul {
+    font-size: 14px;
+  }
 }

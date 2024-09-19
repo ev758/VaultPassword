@@ -40,11 +40,11 @@ function TwoFactorAuthentication() {
     <>
       <div>
         <h1 className="profile-title">Vault Password</h1>
-        <p>Scan QR Code with Google Authenticator</p>
-        <img src="" alt="QR Code" onError={(event) => {event.target.src = qrcodeImage}}/>
+        <p style={{marginBottom: "30px"}}>Scan QR Code with Google Authenticator</p>
+        <img className="qrcode" src="" alt="QR Code" onError={(event) => {event.target.src = qrcodeImage}}/>
 
-        <p>Enter Authentication Code</p>
-        <div onKeyDown={verification}>
+        <div style={{marginTop: "30px"}} onKeyDown={verification}>
+          <p>Enter Authentication Code</p>
           <input className="verification" type="text" id="verification" required/>
         </div>
       </div>

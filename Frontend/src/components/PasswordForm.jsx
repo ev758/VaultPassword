@@ -138,7 +138,6 @@ function PasswordForm({ request, get="", storageId="", close=null }) {
             <textarea
               id={"note" + passwordStorage.storage_id}
               name={"note" + passwordStorage.storage_id}
-              rows="6" cols="70"
               defaultValue={passwordStorage.note}
               ref={noteRef}>
             </textarea>

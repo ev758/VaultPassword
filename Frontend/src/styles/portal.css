@@ -13,7 +13,7 @@
 }
 
 .mb-3 {
-    width: 80%;
+    width: 75%;
     margin-top: 10px;
 }
 
@@ -70,7 +70,7 @@
     height: 150px;
     background-color: white;
     border: 1px solid black;
-    margin: 10px 20px;
+    margin: 10px 0px;
 }
 
 .category-passwords h5 {
@@ -79,17 +79,6 @@
 
 .password-storage-buttons, .option-buttons {
     margin: 0px 15px;
-}
-
-.modal-dialog {
-    width: 700px;
-    max-width: 100%;
-    margin-top: 120px;
-}
-
-.modal-content {
-    width: 700px;
-    text-align: center;
 }
 
 .password-form .url, .password-form .website, .password-form .username, .password-form .note,
@@ -109,4 +98,115 @@
 
 .password-form .password label, .profile-form .password label {
   margin-left: 10px;
+}
+
+@media only screen and (max-width: 480px) {
+    .portal-navbar {
+        height: 110px;
+        display: block;
+        justify-content: none;
+        padding: 0px;
+    }
+    
+    .portal-title {
+        margin: 13px 0px;
+    }
+    
+    .mb-3 {
+        width: 70%;
+        margin-top: 0px;
+    }
+    
+    .dropdown-toggle {
+        float: right;
+        position: relative;
+        right: 10px;
+        bottom: 65px;
+    }
+    
+    .category-title {
+        padding-left: 10px;
+    }
+    
+    .category-format {
+        display: block;
+        grid-template-columns: none;
+        grid-gap: 0px;
+        justify-content: none;
+    }
+    
+    .category-passwords {
+        margin: auto;
+        margin-top: 30px;
+    }
+    
+    .password-form .username, .profile-form .email {
+        margin-bottom: 0px;
+    }
+
+    .profile-form .password {
+        float: left;
+        margin: 30px 0px 30px 23px;
+    }
+
+    .password-form .password label {
+        margin-left: 0px;
+    }
+
+    .profile-form .password label {
+        margin-left: 5px;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 481px) {
+    .mb-3 {
+        width: 50%;
+    }
+    
+    .category-title {
+        padding-left: 20px;
+    }
+    
+    .category-format {
+        display: flex;
+        flex-wrap: wrap;
+        grid-template-columns: none;
+    }
+
+    .profile-form .password {
+        float: left;
+        margin: 0px 0px 30px 23px;
+    }
+
+    .profile-form .password label {
+        margin-left: 5px;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+    .mb-3 {
+        width: 65%;
+    }
+    
+    .category-title {
+        padding-left: 20px;
+    }
+    
+    .category-format {
+        display: flex;
+        flex-wrap: wrap;
+        grid-template-columns: none;
+    }
+}
+
+@media only screen and (max-width: 1200px) and (min-width: 1025px) {
+    .mb-3 {
+        width: 70%;
+    }
+    
+    .category-format {
+        display: flex;
+        flex-wrap: wrap;
+        grid-template-columns: none;
+    }
 }
