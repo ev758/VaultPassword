@@ -134,7 +134,7 @@ function Profile() {
             onClick={() => {
               if (authentication.authenticated === false) {
                 getQRCode();
-                setTimeout(() => {navigate("two-factor-authentication")}, 3000);
+                setTimeout(() => {navigate("two-factor-authentication")}, 5000);
               }
             }}
             variant="dark"
