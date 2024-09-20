@@ -41,7 +41,7 @@ function TwoFactorAuthentication() {
       <div>
         <h1 className="profile-title">Vault Password</h1>
         <p style={{marginBottom: "30px"}}>Scan QR Code with Google Authenticator</p>
-        <img className="qrcode" src="" alt="QR Code" onError={(event) => {event.target.src = qrcodeImage}}/>
+        <img className="qrcode" src={qrcodeImage} alt="QR Code"/>
 
         <div style={{marginTop: "30px"}} onKeyDown={verification}>
           <p>Enter Authentication Code</p>
