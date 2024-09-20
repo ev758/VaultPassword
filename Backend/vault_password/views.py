@@ -269,7 +269,7 @@ class QRCode(generics.RetrieveDestroyAPIView):
         #backend directory
         backend_directory = os.getcwd() + "\\Backend\\" + qrcode_image
         #frontend directory
-        frontend_directory = os.getcwd() + "\\Frontend\\src\\assets\\" + qrcode_image
+        frontend_directory = os.getcwd() + "\\Frontend\\public\\" + qrcode_image
         #moves qrcode image from backend to assets folder in frontend
         os.rename(backend_directory, frontend_directory)
 
@@ -281,7 +281,7 @@ class QRCode(generics.RetrieveDestroyAPIView):
         qrcode_image = f"qrcode{str(user.id)}.png"
 
         #frontend directory
-        qrcode_directory = os.getcwd() + "\\Frontend\\src\\assets\\" + qrcode_image
+        qrcode_directory = os.getcwd() + "\\Frontend\\public\\" + qrcode_image
         qrcode_image_file = os.path.isfile(qrcode_directory)
 
         #if qrcode exists, delete it
