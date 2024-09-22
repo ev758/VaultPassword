@@ -7,7 +7,7 @@ import djangoApiConnection from '../django_api.js';
 function TwoFactorAuthentication() {
   //declarations
   const [profile, setProfile] = useState([]);
-  const qrcodeImage = `qrcode${profile.id}.png`;
+  const qrcodeImage = `/qrcode${profile.id}.png`;
   const navigate = useNavigate();
 
   useEffect(() => {
